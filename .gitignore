@@ -1,0 +1,11 @@
+# all hidden files
+/.*
+
+# all directories
+/*
+
+# dep-git gitignore exclude
+!zip/.gitkeep
+!config.yml
+!dep.sh
+!README.md

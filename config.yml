@@ -1,0 +1,15 @@
+
+---
+
+# This file is a YAML formatted file. YAML indenting is done in spaces not
+# tabs, and whitespace is significant. If you don't stick to this, it will
+# fail on provision
+
+# These are your website, and their names plugins/themes they're
+# located in. See the docs for how to define these, and what all the keys
+# and options are
+# Remember, whitespace is significant! Tabs and spaces mean different things
+
+BITBUCKET_USER: dep-wpi
+BITBUCKET_EMAIL: dev@wpi.pw
+BITBUCKET_PROJECT: premium
