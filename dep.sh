@@ -30,8 +30,7 @@ do
   unzip -q ${PWD}/$entry -d ${PWD}/zip-tmp
   [ -d "${PWD}/zip-tmp/$filename" ] && mv ${PWD}/zip-tmp/$filename ${PWD}/zip-tmp/${package[0]}
   [ -d "${PWD}/zip-tmp/__MACOSX" ] && rm -rf ${PWD}/zip-tmp/__MACOSX
-  count_dirs=$(find zip-tmp/* -maxdepth 0 -type d | wc -l)
-  [ "$count_dirs" == 1 ] && repo_dir="/${package[0]}"
+  [ -d "${PWD}/zip-tmp/${package[0]}" ] && repo_dir="/${package[0]}"
   mv ${PWD}/zip-tmp$repo_dir/* ${PWD}/${package[0]}
   rm -rf ${PWD}/zip-tmp
 
