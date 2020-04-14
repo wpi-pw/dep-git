@@ -15,6 +15,7 @@ for entry in zip/*.zip
 do
   # Clean file path
   file=${entry##*/}
+  filename="${file%.*}"
   # Split filename to name and version
   package=($(awk -F'-v' '{ for(i=1;i<=NF;i++) print $i }' <<< ${file%.zip}))
 
@@ -27,6 +28,7 @@ do
   # Clean cur version and unzip new version and move to the repo
   rm -rf ${PWD}/${package[0]}/*
   unzip -q ${PWD}/$entry -d ${PWD}/zip-tmp
+  [ -d "${PWD}/zip-tmp/$filename" ] && mv ${PWD}/zip-tmp/$filename ${PWD}/zip-tmp/${package[0]}
   [ -d "${PWD}/zip-tmp/__MACOSX" ] && rm -rf ${PWD}/zip-tmp/__MACOSX
   count_dirs=$(find zip-tmp/* -maxdepth 0 -type d | wc -l)
   [ "$count_dirs" == 1 ] && repo_dir="/${package[0]}"
