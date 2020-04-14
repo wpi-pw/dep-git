@@ -27,6 +27,7 @@ do
   # Clean cur version and unzip new version and move to the repo
   rm -rf ${PWD}/${package[0]}/*
   unzip -q ${PWD}/$entry -d ${PWD}/zip-tmp
+  [ -d "${PWD}/zip-tmp/__MACOSX" ] && rm -rf ${PWD}/zip-tmp/__MACOSX
   count_dirs=$(find zip-tmp/* -maxdepth 0 -type d | wc -l)
   [ "$count_dirs" == 1 ] && repo_dir="/${package[0]}"
   mv ${PWD}/zip-tmp$repo_dir/* ${PWD}/${package[0]}
