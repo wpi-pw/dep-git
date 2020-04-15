@@ -10,6 +10,8 @@
 # and options are
 # Remember, whitespace is significant! Tabs and spaces mean different things
 
-BITBUCKET_USER: dep-wpi
+BITBUCKET_USER: wpi-dev
+BITBUCKET_TEAM: dep-wpi
 BITBUCKET_EMAIL: dev@wpi.pw
-BITBUCKET_PROJECT: premium
+BITBUCKET_PROJECT: PREM
+BITBUCKET_PASSWORD: ""

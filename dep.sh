@@ -20,7 +20,21 @@ do
   package=($(awk -F'-v' '{ for(i=1;i<=NF;i++) print $i }' <<< ${file%.zip}))
 
   # Git clone repo
-  git clone --depth=1 git@bitbucket.org:$BITBUCKET_USER/${package[0]}.git
+  git clone --depth=1 git@bitbucket.org:$BITBUCKET_TEAM/${package[0]}.git
+  # If repository not exist, ask to create
+  [ ! -d "${PWD}/${package[0]}" ] && read -r -p "Repo not found, create new one?[y/N] " new_repo_approve
+  # Request the password of bitbucket, required by API, or continue
+  if [[ "$new_repo_approve" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    [ -z "$BITBUCKET_PASSWORD" ] && read -r -p "Please enter the bitbucket password: " BITBUCKET_PASSWORD
+    [ -z "$BITBUCKET_PASSWORD" ] && continue
+    user_data=$BITBUCKET_USER:$BITBUCKET_PASSWORD
+    api_url="https://api.bitbucket.org/2.0/repositories/$BITBUCKET_TEAM/${package[0]}"
+    api_json='{"name": "'${package[0]}'", "is_private": true, "project": {"key": "'$BITBUCKET_PROJECT'"}}'
+    curl -X POST -s -u $user_data $api_url -H "Content-Type:application/json" -d $api_json 1>/dev/null
+    git clone --depth=1 git@bitbucket.org:$BITBUCKET_TEAM/${package[0]}.git
+    # If not created and cloned continue to next
+    [ ! -d "${PWD}/${package[0]}" ] && continue
+  fi
 
   # If not cloned  continue to next
   [ ! -d "${PWD}/${package[0]}" ] && continue
@@ -36,7 +50,7 @@ do
 
   # Setup git config
   cd ${PWD}/${package[0]}
-  git config user.name $BITBUCKET_USER
+  git config user.name $BITBUCKET_TEAM
   git config user.email $BITBUCKET_EMAIL
 
   # Git commit and tag for new version
