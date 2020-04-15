@@ -18,6 +18,8 @@ do
   filename="${file%.*}"
   # Split filename to name and version
   package=($(awk -F'-v' '{ for(i=1;i<=NF;i++) print $i }' <<< ${file%.zip}))
+  # Dir helper
+  repo_dir=""
 
   # Git clone repo
   git clone --depth=1 git@bitbucket.org:$BITBUCKET_TEAM/${package[0]}.git
