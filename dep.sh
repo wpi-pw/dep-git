@@ -34,6 +34,8 @@ for entry in zip/*.zip; do
   package="$( cut -d '.' -f 1 <<< "${file%.zip}" )"
   version="$( cut -d '.' -f 2- <<< "${file%.zip}" )"
 
+  # Lower case helper
+  package=${package,,}
   # Dir helper
   repo_dir=""
 
