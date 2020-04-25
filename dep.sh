@@ -33,14 +33,23 @@ for entry in zip/*.zip; do
   # Split filename to package name and version
   package="$( cut -d '.' -f 1 <<< "${file%.zip}" )"
   version="$( cut -d '.' -f 2- <<< "${file%.zip}" )"
-
   # Lower case helper
   package=${package,,}
   # Dir helper
   repo_dir=""
-
+  # Repo URL
+  repo="git@bitbucket.org:$BITBUCKET_TEAM/$package.git"
+  # Get remotely tag by current version
+  get_tag=$(git ls-remote --heads --tags $repo | grep -E "refs/tags/v${version}$")
+  # If remotely tag exist continue to next package
+  if [ -n "$get_tag" ]; then
+    echo "Package name: $package"
+    echo "Tag exist: $get_tag"
+    echo "Continue to next package..."
+    continue
+  fi
   # Git clone repo
-  git clone --depth=1 git@bitbucket.org:$BITBUCKET_TEAM/$package.git
+  git clone --depth=1 $repo
   # If repository not exist, ask to create
   [ ! -d "${PWD}/$package" ] && read -r -p "Repo not found, create new one?[y/N] " new_repo_approve
   # Request the password of bitbucket, required by API, or continue
@@ -57,28 +66,24 @@ for entry in zip/*.zip; do
   fi
   # If not cloned  continue to next
   [ ! -d "${PWD}/$package" ] && continue
-
   # Clean cur version and unzip new version and move to the repo
   rm -rf ${PWD}/$package/*
-  unzip -q ${PWD}/$entry -d ${PWD}/zip-tmp
+  unzip -q -o ${PWD}/$entry -d ${PWD}/zip-tmp
   [ -d "${PWD}/zip-tmp/$filename" ] && mv ${PWD}/zip-tmp/$filename ${PWD}/zip-tmp/$package
   [ -d "${PWD}/zip-tmp/__MACOSX" ] && rm -rf ${PWD}/zip-tmp/__MACOSX
   [ -d "${PWD}/zip-tmp/$package" ] && repo_dir="/$package"
   mv ${PWD}/zip-tmp$repo_dir/* ${PWD}/$package
   rm -rf ${PWD}/zip-tmp
-
   # Setup git config
   cd ${PWD}/$package
   git config user.name $BITBUCKET_TEAM
   git config user.email $BITBUCKET_EMAIL
-
   # Git commit and tag for new version
   git add .
   git commit -m v$version
   git push origin master
   git tag -a v$version -m v$version
   git push --tags
-
   # Clean current repo and zip
   cd ../
   rm -rf ${PWD}/$package
